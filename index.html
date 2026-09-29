@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>dihsonion gambleria</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Nunito:wght@600;800&display=swap">
+<style>
+:root{--bg:#1c0a2b;--pan:#2b1140;--pan2:#3d1b58;--ink:#fbe9f1;--mut:#b99ac9;--pink:#e0559c;--gold:#f6bd3b;--grn:#7fd44b;--red:#d2304f;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*,*::before,*::after{box-sizing:inherit}[hidden]{display:none!important}
+body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#4a1c6b,var(--bg)) fixed;color:var(--ink);font:600 16px/1.4 Nunito,system-ui,sans-serif;min-height:100vh}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 18px}
+.logo{font:400 2rem/.9 'Bagel Fat One',Impact,sans-serif;color:var(--pink);transform:rotate(-2deg)}.logo span{display:block;font-size:1.25rem;color:var(--gold);margin-left:1.4em}
+.acct{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.bal{background:#12061d;border:2px solid var(--gold);color:var(--gold);border-radius:999px;padding:.25em .9em;font-size:1.2rem}.bal::before{content:'🪙 '}
+button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:.55em 1.1em;background:var(--pan2);color:var(--ink);cursor:pointer}
+button:hover:not(:disabled){filter:brightness(1.2)}button.on{background:var(--pink)}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.big{background:var(--gold);color:#2a1300;font-size:1.2rem;padding:.7em 2em;box-shadow:0 4px 0 #a97709}.big:active{transform:translateY(3px);box-shadow:none}
+nav{display:flex;gap:8px;overflow-x:auto;padding:0 18px 12px;justify-content:center;flex-wrap:wrap}nav button{font-size:1.05rem}
+main{padding:0 14px 40px}.pane{display:none}.pane.on{display:block}
+.panel{background:var(--pan);border-radius:22px;padding:20px;max-width:720px;margin:0 auto;text-align:center;box-shadow:0 10px 40px #0007}
+h2{font:400 1.7rem 'Bagel Fat One',sans-serif;margin:0 0 12px;color:var(--gold)}
+input{font:inherit;font-weight:800;background:#12061d;color:var(--ink);border:2px solid var(--pan2);border-radius:12px;padding:.45em .7em;width:7em}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:12px 0}.chips button{padding:.35em .8em;font-size:.9rem}
+.wheelbox{position:relative;width:280px;height:280px;margin:8px auto 16px}
+#wheel{width:100%;height:100%;border-radius:50%;border:8px solid var(--gold);transition:transform 4s cubic-bezier(.15,.7,.1,1)}
+.ptr{position:absolute;left:50%;top:-10px;margin-left:-11px;border:11px solid transparent;border-top:22px solid var(--ink);border-bottom:0}
+#rres{position:absolute;inset:80px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font:400 2.6rem 'Bagel Fat One',sans-serif;border:4px solid var(--gold)}
+canvas{max-width:100%;background:#170824;border-radius:16px}
+.hand{display:flex;gap:6px;justify-content:center;min-height:100px;flex-wrap:wrap}.lbl{color:var(--mut);margin:8px 0 2px}
+.card{width:64px;height:92px;background:#fff8f0;color:#1a1024;border-radius:9px;font:800 1.5rem/1.1 Nunito,sans-serif;padding:6px;text-align:left;box-shadow:0 3px 8px #0006}.card b{display:block;font-size:1.6rem}.card.rd{color:var(--red)}
+.card.back{background:repeating-linear-gradient(45deg,var(--pink) 0 6px,#a12f6f 6px 12px);border:3px solid #fff8f0}
+#hlc .card{width:100px;height:140px;font-size:2.2rem}#hlc .card b{font-size:2.6rem}
+.status{min-height:1.5em;font-size:1.15rem;color:var(--gold)}
+table{width:100%;border-collapse:collapse;text-align:left}td,th{padding:6px;border-bottom:1px solid var(--pan2)}td input{width:6em}
+#auth{position:fixed;inset:0;display:grid;place-items:center;background:#0a0312e6;z-index:9;padding:16px}#auth .panel{width:min(380px,100%)}#auth input{width:100%;margin:5px 0}#aerr{color:#ff8fa8;min-height:1.4em}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:var(--gold);color:#2a1300;padding:.6em 1.2em;border-radius:999px;font-weight:800;transition:transform .25s;z-index:15}#toast.show{transform:translate(-50%,0)}
+.pop{position:fixed;bottom:-30px;font-size:28px;animation:up 2s ease-out forwards;pointer-events:none;z-index:20}@keyframes up{to{transform:translateY(-105vh) rotate(40deg);opacity:0}}
+ol{list-style:none;padding:0;margin:0;text-align:left}#lbl li{display:flex;justify-content:space-between;gap:10px;padding:8px 14px;border-radius:12px;margin-bottom:4px;background:var(--pan2)}#lbl li.me{outline:2px solid var(--gold)}#lbl b{color:var(--gold)}
+.note{color:var(--mut);font-size:.85rem;text-align:center;margin-top:24px}
+@media(prefers-reduced-motion:reduce){.pop{display:none}#wheel{transition-duration:.01s}}
+</style></head><body>
+<header><div class="logo">dihsonion<span>gambleria</span></div>
+<div class="acct"><span id="who"></span><b class="bal" id="bal">—</b><button id="daily" hidden>Daily onion</button><button id="relief" hidden>Onion relief +500</button><button id="out" hidden>Log out</button></div></header>
+<nav id="tabs"><button data-t="roul" class="on">Roulette</button><button data-t="plk">Plinko</button><button data-t="bj">Blackjack</button><button data-t="hl">Hi-Lo Cards</button><button data-t="lb">Baltop</button><button data-t="adm" hidden>Admin</button></nav>
+<main>
+<section class="pane on panel" id="roul"><h2>Roulette</h2>
+<div class="wheelbox"><div id="wheel"></div><i class="ptr"></i><div id="rres">?</div></div>
+<div class="row" id="rbets"><button data-b="red" class="on">Red 2×</button><button data-b="black">Black 2×</button><button data-b="odd">Odd 2×</button><button data-b="even">Even 2×</button><button data-b="low">1–18 2×</button><button data-b="high">19–36 2×</button><button data-b="num">Number 36×</button></div>
+<div class="row"><label>Number <input id="rnum" type="number" min="0" max="36" value="7"></label><label>Bet <input id="rbet" type="number" min="1" value="50"></label><span class="chips" data-for="rbet"><button data-m=".5">½</button><button data-m="2">2×</button><button data-m="max">MAX</button></span></div>
+<button class="big" id="rgo">SPIN</button></section>
+
+<section class="pane panel" id="plk"><h2>Plinko</h2><canvas id="pc" width="340" height="400"></canvas>
+<div class="row"><label>Bet <input id="pbet" type="number" min="1" value="20"></label><span class="chips" data-for="pbet"><button data-m=".5">½</button><button data-m="2">2×</button><button data-m="max">MAX</button></span></div>
+<button class="big" id="pgo">DROP BALL</button><div class="lbl" id="plog">Drop as many balls as you like.</div></section>
+
+<section class="pane panel" id="bj"><h2>Blackjack</h2>
+<div class="lbl">Dealer <b id="bjdv"></b></div><div class="hand" id="bjd"></div>
+<div class="lbl">You <b id="bjpv"></b></div><div class="hand" id="bjp"></div>
+<div class="status" id="bjs">Place a bet and deal.</div>
+<div class="row"><label>Bet <input id="bjbet" type="number" min="1" value="50"></label><span class="chips" data-for="bjbet"><button data-m=".5">½</button><button data-m="2">2×</button><button data-m="max">MAX</button></span></div>
+<div class="row"><button class="big" id="bjdeal">DEAL</button><button id="bjhit" disabled>Hit</button><button id="bjstand" disabled>Stand</button><button id="bjdbl" disabled>Double</button></div></section>
+
+<section class="pane panel" id="hl"><h2>Hi-Lo Cards</h2>
+<div class="hand" id="hlc"></div><div class="status" id="hls">Guess if the next card is higher or lower. Ties lose. Cash out any time.</div>
+<div class="lbl">Cash-out value: <b id="hlv">0</b></div>
+<div class="row"><label>Bet <input id="hlbet" type="number" min="1" value="50"></label><span class="chips" data-for="hlbet"><button data-m=".5">½</button><button data-m="2">2×</button><button data-m="max">MAX</button></span></div>
+<div class="row"><button class="big" id="hlgo">START</button><button id="hlup" disabled>Higher</button><button id="hldn" disabled>Lower</button><button id="hlcash" disabled>Cash out</button></div></section>
+
+<section class="pane panel" id="lb"><h2>Baltop</h2><div class="row" id="lbt"><button data-k="coins" class="on">All money</button><button data-k="roulette">Roulette</button><button data-k="plinko">Plinko</button><button data-k="blackjack">Blackjack</button><button data-k="hilo">Hi-Lo</button></div>
+<div class="lbl" id="lbd">Ranked by coins held. Top 10.</div><ol id="lbl"></ol><div class="lbl" id="lbn"></div></section>
+
+<section class="pane panel" id="adm"><h2>Admin panel</h2><div class="lbl" id="astat"></div>
+<div class="row"><button id="agift">Gift 500 to all</button><button id="areset">Reset all to 1000</button></div>
+<table><thead><tr><th>Player</th><th>Coins</th><th></th></tr></thead><tbody id="atb"></tbody></table></section>
+<p class="note">Play money only. No real gambling, no real prizes. Just onions.</p>
+</main>
+<div id="auth" hidden><div class="panel"><h2>Enter the gambleria</h2><p class="lbl">New players start with 1,000 coins.</p>
+<input id="au" placeholder="Username" autocomplete="username"><input id="ap" type="password" placeholder="Password" autocomplete="current-password">
+<div id="aerr"></div><div class="row"><button class="big" id="alog" style="font-size:1rem;padding:.6em 1.4em">Log in</button><button id="areg">Sign up</button></div></div></div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const st={g(k){try{return localStorage.getItem(k)}catch(e){return null}},s(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let U={};try{U=JSON.parse(st.g('dg_users')||'{}')}catch(e){}
+let me=null,adm=false,curTab='roul';
+const save=()=>st.s('dg_users',JSON.stringify(U));
+const hash=s=>{let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return h.toString(36)};
+const fmt=n=>Math.round(n).toLocaleString(),coins=()=>me&&U[me]?U[me].coins:0;
+let DB=null,UID=null,LB=[],lbT='coins';
+function push(){clearTimeout(push.t);push.t=setTimeout(sync,800)}
+async function sync(){if(!DB||!UID||!me||!U[me])return;const s=U[me].st||{};try{await DB.doc('lb/'+UID).set({name:me,coins:coins(),roulette:s.roulette||0,plinko:s.plinko||0,blackjack:s.blackjack||0,hilo:s.hilo||0,t:Date.now()})}catch(e){}}
+function rec(g,n){if(!me||!U[me])return;const s=U[me].st=U[me].st||{};s[g]=(s[g]||0)+Math.round(n);save();push()}
+function lbR(){const T=lbT,L=$('#lbl');const rows=LB.filter(r=>T==='coins'||r[T]).sort((a,b)=>(b[T]||0)-(a[T]||0)).slice(0,10);
+$('#lbn').textContent=!DB?'The leaderboard database is not connected in this view.':!UID?'Sign in to claude.ai with edit access to appear on the baltop.':'';
+L.textContent='';if(!rows.length){const li=document.createElement('li');li.textContent='No players yet. Be the first!';L.append(li);return}
+rows.forEach((r,i)=>{const li=document.createElement('li'),a=document.createElement('span'),b=document.createElement('b'),v=r[T]||0;if(r.name===me)li.className='me';
+a.textContent=(['🥇','🥈','🥉'][i]||(i+1)+'.')+' '+String(r.name||'?').slice(0,16);b.textContent=(T==='coins'?'':v>0?'+':'')+fmt(v);li.append(a,b);L.append(li)})}
+$$('#lbt button').forEach(b=>b.onclick=()=>{lbT=b.dataset.k;$$('#lbt button').forEach(x=>x.classList.toggle('on',x===b));$('#lbd').textContent=lbT==='coins'?'Ranked by coins held. Top 10.':'Ranked by net coins won in this game. Top 10.';lbR()});
+(async()=>{try{const c=window.claude;if(!c||!c.use)return;const[d,u]=await Promise.all([c.use('db'),c.use('user')]);if(!d)return;DB=d;UID=u?await u.id():null;
+DB.collection('lb').limit(500).onSnapshot(sn=>{LB=sn.docs.map(x=>x.data()).filter(Boolean);lbR()},()=>lbR());sync()}catch(e){}lbR()})();
+function add(n){if(!me)return;U[me].coins=Math.max(0,Math.round(U[me].coins+n));save();render();push()}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2400)}
+function pop(n=14){for(let i=0;i<n;i++){const s=document.createElement('span');s.className='pop';s.textContent=['🧅','🪙','✨'][i%3];s.style.left=(8+Math.random()*84)+'vw';s.style.animationDelay=Math.random()*.4+'s';document.body.append(s);setTimeout(()=>s.remove(),2600)}}
+function getBet(id){if(!me){show();return 0}const b=Math.floor(+$('#'+id).value);if(!(b>=1)){toast('Enter a bet of 1 or more');return 0}if(b>coins()){toast('Not enough coins');return 0}return b}
+document.addEventListener('click',e=>{const c=e.target.closest('.chips button');if(!c)return;const i=$('#'+c.parentNode.dataset.for),m=c.dataset.m;i.value=m==='max'?Math.max(1,coins()):Math.max(1,Math.floor(i.value*m))});
+function show(){$('#auth').hidden=false}
+function auth(m){const u=$('#au').value.trim().toLowerCase(),p=$('#ap').value,er=$('#aerr');
+if(!/^[a-z0-9_]{3,16}$/.test(u)){er.textContent='Username: 3–16 letters, numbers or _';return}
+if(p.length<3){er.textContent='Password needs 3+ characters';return}
+let a=false;
+if(u==='son'&&p==='onion'&&m==='log'){a=true;U.son=U.son||{p:hash(p),coins:1000,streak:0,last:0}}
+else if(m==='reg'){if(U[u]||u==='son'){er.textContent='That name is taken';return}U[u]={p:hash(p),coins:1000,streak:0,last:0}}
+else if(!U[u]||U[u].p!==hash(p)){er.textContent='Wrong username or password';return}
+me=u;adm=a;st.s('dg_me',JSON.stringify({u,a}));save();push();$('#auth').hidden=true;$('#ap').value='';er.textContent='';render();toast('Welcome, '+u+'!')}
+$('#alog').onclick=()=>auth('log');$('#areg').onclick=()=>auth('reg');
+$('#out').onclick=()=>{me=null;adm=false;st.s('dg_me','');render();show()};
+function tab(t){$$('.pane').forEach(p=>p.classList.toggle('on',p.id===t));$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));curTab=t;if(t==='plk')plkLoop()}
+$$('#tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
+function render(){const on=!!me;$('#who').textContent=on?me:'';$('#bal').textContent=on?fmt(coins()):'—';$('#out').hidden=!on;$('#daily').hidden=!on;$('#relief').hidden=!(on&&coins()<10);$('[data-t=adm]').hidden=!adm;if(!adm&&curTab==='adm')tab('roul');if(adm&&curTab==='adm')adminRender()}
+$('#daily').onclick=()=>{const u=U[me],now=Date.now(),h=(now-u.last)/36e5;if(h<20){toast('Next daily onion in '+Math.ceil(20-h)+'h');return}u.streak=h<48?u.streak+1:1;u.last=now;const g=200+50*Math.min(u.streak,10);add(g);pop();toast('Day '+u.streak+' streak: +'+g+' coins')};
+$('#relief').onclick=()=>{if(coins()<10){add(500);toast('The onion council pities you. +500')}};
+const win=(bet,m,txt)=>{add(bet*m);if(m>1)pop();toast(txt)};
+
+/* ROULETTE */
+const ORD=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26],RED=new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]),dg=360/37;
+let rb='red',rot=0,spin=false;
+$('#wheel').style.background='conic-gradient('+ORD.map((n,i)=>(n?RED.has(n)?'#c2263f':'#1a1024':'#3aa655')+' '+i*dg+'deg '+(i+1)*dg+'deg').join(',')+')';
+$$('#rbets button').forEach(b=>b.onclick=()=>{rb=b.dataset.b;$$('#rbets button').forEach(x=>x.classList.toggle('on',x===b))});
+const RW={red:n=>RED.has(n),black:n=>n>0&&!RED.has(n),odd:n=>n>0&&n%2==1,even:n=>n>0&&n%2==0,low:n=>n>=1&&n<=18,high:n=>n>=19};
+$('#rgo').onclick=()=>{if(spin)return;const bet=getBet('rbet');if(!bet)return;const nv=Math.floor(+$('#rnum').value);
+if(rb==='num'&&!(nv>=0&&nv<=36)){toast('Pick a number from 0 to 36');return}
+add(-bet);spin=true;$('#rgo').disabled=true;
+const n=Math.floor(Math.random()*37),c=(ORD.indexOf(n)+.5)*dg;
+rot+=1440+(((-c-rot)%360)+360)%360;$('#wheel').style.transform='rotate('+rot+'deg)';
+setTimeout(()=>{const r=$('#rres');r.textContent=n;r.style.color=n?RED.has(n)?'#ff6b86':'#fbe9f1':'#7fd44b';
+const w=rb==='num'?n===nv:RW[rb](n),m=rb==='num'?36:2;
+if(w)win(bet,m,n+' — you win '+fmt(bet*m-bet)+'!');else toast(n+' — the house takes '+fmt(bet));rec('roulette',w?bet*m-bet:-bet);
+spin=false;$('#rgo').disabled=false},4200)};
+
+/* PLINKO */
+const cv=$('#pc'),cx=cv.getContext('2d'),W=340,H=400,MU=[10,3,1.5,.7,.3,.7,1.5,3,10],pegs=[];let balls=[],raf;
+for(let r=0;r<9;r++){const n=r+3,x0=(W-(n-1)*34)/2;for(let i=0;i<n;i++)pegs.push([x0+i*34,60+r*30])}
+function plkStep(){for(let k=balls.length-1;k>=0;k--){const b=balls[k];b.vy=Math.min(7,b.vy+.22);b.x+=b.vx;b.y+=b.vy;
+if(b.x<6){b.x=6;b.vx=Math.abs(b.vx)*.5}if(b.x>W-6){b.x=W-6;b.vx=-Math.abs(b.vx)*.5}
+for(const[p,q]of pegs){const dx=b.x-p,dy=b.y-q,ds=Math.hypot(dx,dy);if(ds<9&&ds>0){const nx=dx/ds,ny=dy/ds;b.x=p+nx*9;b.y=q+ny*9;const d=b.vx*nx+b.vy*ny;if(d<0){b.vx-=1.6*d*nx;b.vy-=1.6*d*ny;b.vx+=(Math.random()-.5)*.8}}}
+if(b.y>H-50){balls.splice(k,1);const m=MU[Math.min(8,Math.max(0,Math.floor(b.x/(W/9))))];add(b.bet*m);rec('plinko',b.bet*m-b.bet);if(m>=1.5)pop(8);
+const l=$('#plog');l.textContent=(l.dataset.h=(m+'× ('+(m>=1?'+':'')+fmt(b.bet*m-b.bet)+')  ')+(l.dataset.h||'')).slice(0,120)}}}
+function plkDraw(){cx.clearRect(0,0,W,H);cx.fillStyle='#e9c8dc';pegs.forEach(([x,y])=>{cx.beginPath();cx.arc(x,y,3,0,7);cx.fill()});
+const w=W/9;MU.forEach((m,i)=>{cx.fillStyle=m>=3?'#e0559c':m>=1?'#f6bd3b':'#3d1b58';cx.fillRect(i*w+2,H-46,w-4,42);cx.fillStyle=m>=1?'#2a1300':'#fbe9f1';cx.font='800 13px Nunito,sans-serif';cx.textAlign='center';cx.fillText(m+'×',i*w+w/2,H-20)});
+cx.fillStyle='#f6bd3b';balls.forEach(b=>{cx.beginPath();cx.arc(b.x,b.y,6,0,7);cx.fill()})}
+function plkLoop(){cancelAnimationFrame(raf);(function f(){plkStep();plkDraw();if(curTab==='plk')raf=requestAnimationFrame(f)})()}
+$('#pgo').onclick=()=>{const bet=getBet('pbet');if(!bet)return;add(-bet);balls.push({x:W/2+(Math.random()-.5)*10,y:8,vx:0,vy:0,bet})};
+
+/* BLACKJACK */
+const SU=['♠','♥','♦','♣'],RK=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+const deck=()=>{const d=[];for(const s of SU)for(const r of RK)d.push({r,s});for(let i=51;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]]}return d};
+const cardH=(c,h)=>h?'<div class="card back"></div>':'<div class="card '+('♥♦'.includes(c.s)?'rd':'')+'">'+c.r+'<b>'+c.s+'</b></div>';
+const val=h=>{let t=0,a=0;for(const c of h){if(c.r==='A'){a++;t+=11}else t+=('JQK'.includes(c.r)?10:+c.r)}while(t>21&&a--)t-=10;return t};
+let bj={on:false,p:[],d:[],bet:0,dk:[]};
+function bjR(){$('#bjd').innerHTML=bj.d.map((c,i)=>cardH(c,bj.on&&i==1)).join('');$('#bjp').innerHTML=bj.p.map(c=>cardH(c)).join('');
+$('#bjdv').textContent=bj.d.length?(bj.on?val([bj.d[0]]):val(bj.d)):'';$('#bjpv').textContent=bj.p.length?val(bj.p):'';
+$('#bjdeal').disabled=bj.on;$('#bjhit').disabled=$('#bjstand').disabled=!bj.on;$('#bjdbl').disabled=!bj.on||bj.p.length>2||coins()<bj.bet}
+function bjEnd(m,t){bj.on=false;if(m>0)add(bj.bet*m);rec('blackjack',bj.bet*m-bj.bet);if(m>1)pop();$('#bjs').textContent=t;bjR()}
+$('#bjdeal').onclick=()=>{const b=getBet('bjbet');if(!b)return;add(-b);bj={dk:deck(),p:[],d:[],bet:b,on:true};
+bj.p.push(bj.dk.pop(),bj.dk.pop());bj.d.push(bj.dk.pop(),bj.dk.pop());const pv=val(bj.p),dv=val(bj.d);
+if(pv==21||dv==21){if(pv==dv)bjEnd(1,'Both blackjack — push');else if(pv==21)bjEnd(2.5,'Blackjack! Pays 3:2');else bjEnd(0,'Dealer has blackjack');return}
+$('#bjs').textContent='Hit, stand or double?';bjR()};
+function bjStand(){while(val(bj.d)<17)bj.d.push(bj.dk.pop());const p=val(bj.p),d=val(bj.d);
+if(d>21)bjEnd(2,'Dealer busts — you win!');else if(p>d)bjEnd(2,'You win!');else if(p==d)bjEnd(1,'Push');else bjEnd(0,'Dealer wins')}
+$('#bjhit').onclick=()=>{bj.p.push(bj.dk.pop());const v=val(bj.p);if(v>21)bjEnd(0,'Bust!');else if(v==21)bjStand();else{$('#bjs').textContent='Hit or stand?';bjR()}};
+$('#bjstand').onclick=bjStand;
+$('#bjdbl').onclick=()=>{add(-bj.bet);bj.bet*=2;bj.p.push(bj.dk.pop());if(val(bj.p)>21)bjEnd(0,'Bust on the double!');else bjStand()};
+bjR();
+
+/* HI-LO */
+let hl={on:false,c:null,m:1,bet:0};
+const rc=()=>{const i=Math.floor(Math.random()*13);return{i,r:RK[i],s:SU[Math.floor(Math.random()*4)]}};
+function hlR(t){$('#hlc').innerHTML=hl.c?cardH(hl.c):'';$('#hls').textContent=t;$('#hlv').textContent=hl.on?fmt(hl.bet*hl.m):'0';
+$('#hlgo').disabled=hl.on;$('#hlup').disabled=$('#hldn').disabled=$('#hlcash').disabled=!hl.on}
+$('#hlgo').onclick=()=>{const b=getBet('hlbet');if(!b)return;add(-b);hl={on:true,bet:b,m:1,c:rc()};hlR('Higher or lower?')};
+function hlG(up){if(!hl.on)return;const n=rc(),i=hl.c.i,cnt=up?12-i:i;if(cnt==0){toast('Nothing can beat that — go the other way');return}
+const w=up?n.i>i:n.i<i;hl.c=n;
+if(w){hl.m*=.94*13/cnt;hlR('Correct! Now paying '+hl.m.toFixed(2)+'×')}else{hl.on=false;rec('hilo',-hl.bet);hlR('Wrong — you lost '+fmt(hl.bet));toast('Busted, lost '+fmt(hl.bet))}}
+$('#hlup').onclick=()=>hlG(true);$('#hldn').onclick=()=>hlG(false);
+$('#hlcash').onclick=()=>{if(!hl.on)return;hl.on=false;const w=Math.floor(hl.bet*hl.m);add(w);rec('hilo',w-hl.bet);if(hl.m>1)pop();hlR('Cashed out '+fmt(w)+' coins');toast('Cashed out '+fmt(w))};
+
+/* ADMIN */
+function adminRender(){const ks=Object.keys(U);$('#astat').textContent=ks.length+' players · '+fmt(ks.reduce((s,k)=>s+U[k].coins,0))+' coins in play';
+$('#atb').innerHTML=ks.map(k=>'<tr><td>'+k+'</td><td><input type="number" value="'+U[k].coins+'" data-k="'+k+'"></td><td><button data-a="set" data-k="'+k+'">Set</button> <button data-a="add" data-k="'+k+'">+1000</button> '+(k==='son'?'':'<button data-a="del" data-k="'+k+'">Delete</button>')+'</td></tr>').join('')}
+$('#atb').onclick=e=>{const b=e.target.closest('button');if(!b||!adm)return;const k=b.dataset.k,a=b.dataset.a;if(!U[k])return;
+if(a==='set')U[k].coins=Math.max(0,Math.floor(+$('#atb input[data-k="'+k+'"]').value)||0);
+if(a==='add')U[k].coins+=1000;if(a==='del'&&k!=='son')delete U[k];save();render();adminRender()};
+$('#agift').onclick=()=>{if(!adm)return;Object.values(U).forEach(u=>u.coins+=500);save();render();adminRender();toast('Gifted 500 to everyone')};
+$('#areset').onclick=()=>{if(!adm)return;Object.values(U).forEach(u=>u.coins=1000);save();render();adminRender()};
+
+try{const s=JSON.parse(st.g('dg_me')||'null');if(s&&U[s.u]){me=s.u;adm=!!s.a&&s.u==='son'}}catch(e){}
+render();if(!me)show();
+</script></body></html>
