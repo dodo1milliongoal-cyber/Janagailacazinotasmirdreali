@@ -2,6 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><title>dihsonion gambleria</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Nunito:wght@600;800&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{--bg:#1c0a2b;--pan:#2b1140;--pan2:#3d1b58;--ink:#fbe9f1;--mut:#b99ac9;--pink:#e0559c;--gold:#f6bd3b;--grn:#7fd44b;--red:#d2304f;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}*,*::before,*::after{box-sizing:inherit}[hidden]{display:none!important}
@@ -77,44 +78,47 @@ ol{list-style:none;padding:0;margin:0;text-align:left}#lbl li{display:flex;justi
 <div id="toast"></div>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const st={g(k){try{return localStorage.getItem(k)}catch(e){return null}},s(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-let U={};try{U=JSON.parse(st.g('dg_users')||'{}')}catch(e){}
-let me=null,adm=false,curTab='roul';
-const save=()=>st.s('dg_users',JSON.stringify(U));
-const hash=s=>{let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return h.toString(36)};
-const fmt=n=>Math.round(n).toLocaleString(),coins=()=>me&&U[me]?U[me].coins:0;
-let DB=null,UID=null,LB=[],lbT='coins';
-function push(){clearTimeout(push.t);push.t=setTimeout(sync,800)}
-async function sync(){if(!DB||!UID||!me||!U[me])return;const s=U[me].st||{};try{await DB.doc('lb/'+UID).set({name:me,coins:coins(),roulette:s.roulette||0,plinko:s.plinko||0,blackjack:s.blackjack||0,hilo:s.hilo||0,t:Date.now()})}catch(e){}}
-function rec(g,n){if(!me||!U[me])return;const s=U[me].st=U[me].st||{};s[g]=(s[g]||0)+Math.round(n);save();push()}
-function lbR(){const T=lbT,L=$('#lbl');const rows=LB.filter(r=>T==='coins'||r[T]).sort((a,b)=>(b[T]||0)-(a[T]||0)).slice(0,10);
-$('#lbn').textContent=!DB?'The leaderboard database is not connected in this view.':!UID?'Sign in to claude.ai with edit access to appear on the baltop.':'';
-L.textContent='';if(!rows.length){const li=document.createElement('li');li.textContent='No players yet. Be the first!';L.append(li);return}
-rows.forEach((r,i)=>{const li=document.createElement('li'),a=document.createElement('span'),b=document.createElement('b'),v=r[T]||0;if(r.name===me)li.className='me';
-a.textContent=(['🥇','🥈','🥉'][i]||(i+1)+'.')+' '+String(r.name||'?').slice(0,16);b.textContent=(T==='coins'?'':v>0?'+':'')+fmt(v);li.append(a,b);L.append(li)})}
-$$('#lbt button').forEach(b=>b.onclick=()=>{lbT=b.dataset.k;$$('#lbt button').forEach(x=>x.classList.toggle('on',x===b));$('#lbd').textContent=lbT==='coins'?'Ranked by coins held. Top 10.':'Ranked by net coins won in this game. Top 10.';lbR()});
-(async()=>{try{const c=window.claude;if(!c||!c.use)return;const[d,u]=await Promise.all([c.use('db'),c.use('user')]);if(!d)return;DB=d;UID=u?await u.id():null;
-DB.collection('lb').limit(500).onSnapshot(sn=>{LB=sn.docs.map(x=>x.data()).filter(Boolean);lbR()},()=>lbR());sync()}catch(e){}lbR()})();
-function add(n){if(!me)return;U[me].coins=Math.max(0,Math.round(U[me].coins+n));save();render();push()}
+const SB=window.supabase?window.supabase.createClient('https://ssicmanegiuxqbnaljtc.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzaWNtYW5lZ2l1eHFibmFsanRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3MDI2NDYsImV4cCI6MjEwNjI3ODY0Nn0.x3de4mUcOUx9KAytoAVyUPqysp_cMa33MgjantSHBfc'):null;
+let P=null,me=null,adm=false,curTab='roul',LB=[],lbT='coins';
+const fmt=n=>Math.round(n).toLocaleString(),coins=()=>P?P.coins:0,mail=u=>u+'@dihsonion.app';
+const F=['coins','roulette','plinko','blackjack','hilo','streak','last_daily'];
+function push(){clearTimeout(push.t);push.t=setTimeout(sync,700)}
+async function sync(){if(!P||!SB)return;const b={};F.forEach(k=>b[k]=P[k]);const r=await SB.from('profiles').update(b).eq('id',P.id);if(r.error)console.warn(r.error.message)}
+function add(n){if(!P)return;P.coins=Math.max(0,Math.round(P.coins+n));render();push()}
+function rec(g,n){if(!P)return;P[g]=(P[g]||0)+Math.round(n);push()}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2400)}
 function pop(n=14){for(let i=0;i<n;i++){const s=document.createElement('span');s.className='pop';s.textContent=['🧅','🪙','✨'][i%3];s.style.left=(8+Math.random()*84)+'vw';s.style.animationDelay=Math.random()*.4+'s';document.body.append(s);setTimeout(()=>s.remove(),2600)}}
 function getBet(id){if(!me){show();return 0}const b=Math.floor(+$('#'+id).value);if(!(b>=1)){toast('Enter a bet of 1 or more');return 0}if(b>coins()){toast('Not enough coins');return 0}return b}
 document.addEventListener('click',e=>{const c=e.target.closest('.chips button');if(!c)return;const i=$('#'+c.parentNode.dataset.for),m=c.dataset.m;i.value=m==='max'?Math.max(1,coins()):Math.max(1,Math.floor(i.value*m))});
 function show(){$('#auth').hidden=false}
-function auth(m){const u=$('#au').value.trim().toLowerCase(),p=$('#ap').value,er=$('#aerr');
+async function enter(uid){const r=await SB.from('profiles').select('*').eq('id',uid).single();
+if(r.error||!r.data){await SB.auth.signOut();P=me=null;adm=false;$('#aerr').textContent='This account no longer exists. Sign up again.';render();show();return false}
+P=r.data;me=P.username;adm=!!P.is_admin;$('#auth').hidden=true;$('#ap').value='';$('#aerr').textContent='';render();return true}
+async function auth(m){const u=$('#au').value.trim().toLowerCase(),p=$('#ap').value,er=$('#aerr');
+if(!SB){er.textContent='Database not reachable from this page. Use your GitHub Pages site.';return}
 if(!/^[a-z0-9_]{3,16}$/.test(u)){er.textContent='Username: 3–16 letters, numbers or _';return}
-if(p.length<3){er.textContent='Password needs 3+ characters';return}
-let a=false;
-if(u==='son'&&p==='onion'&&m==='log'){a=true;U.son=U.son||{p:hash(p),coins:1000,streak:0,last:0}}
-else if(m==='reg'){if(U[u]||u==='son'){er.textContent='That name is taken';return}U[u]={p:hash(p),coins:1000,streak:0,last:0}}
-else if(!U[u]||U[u].p!==hash(p)){er.textContent='Wrong username or password';return}
-me=u;adm=a;st.s('dg_me',JSON.stringify({u,a}));save();push();$('#auth').hidden=true;$('#ap').value='';er.textContent='';render();toast('Welcome, '+u+'!')}
+if(p.length<6){er.textContent='Password needs 6+ characters';return}
+er.textContent='';$('#alog').disabled=$('#areg').disabled=true;
+try{let r;
+if(m==='reg'){r=await SB.auth.signUp({email:mail(u),password:p});
+if(r.error)throw new Error(/already/i.test(r.error.message)?'That name is taken':r.error.message);
+if(!r.data.session)throw new Error('Turn off "Confirm email" in Supabase Auth settings.');
+const ins=await SB.from('profiles').insert({id:r.data.user.id,username:u});if(ins.error)throw new Error(ins.error.code==='23505'?'That name is taken':ins.error.message)}
+else{r=await SB.auth.signInWithPassword({email:mail(u),password:p});if(r.error)throw new Error('Wrong username or password')}
+if(await enter(r.data.user.id))toast('Welcome, '+me+'!')}catch(e){er.textContent=e.message}
+$('#alog').disabled=$('#areg').disabled=false}
 $('#alog').onclick=()=>auth('log');$('#areg').onclick=()=>auth('reg');
-$('#out').onclick=()=>{me=null;adm=false;st.s('dg_me','');render();show()};
-function tab(t){$$('.pane').forEach(p=>p.classList.toggle('on',p.id===t));$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));curTab=t;if(t==='plk')plkLoop()}
+$('#out').onclick=async()=>{if(SB)await SB.auth.signOut();P=me=null;adm=false;render();show()};
+async function lbLoad(){if(!SB)return;const r=await SB.from('profiles').select('username,coins,roulette,plinko,blackjack,hilo').order(lbT,{ascending:false}).limit(10);LB=r.data||[];lbR()}
+function lbR(){const T=lbT,L=$('#lbl');L.textContent='';const rows=LB.filter(r=>T==='coins'||r[T]);
+if(!rows.length){const li=document.createElement('li');li.textContent='No players yet. Be the first!';L.append(li);return}
+rows.forEach((r,i)=>{const li=document.createElement('li'),a=document.createElement('span'),b=document.createElement('b'),v=r[T]||0;if(r.username===me)li.className='me';
+a.textContent=(['🥇','🥈','🥉'][i]||(i+1)+'.')+' '+String(r.username||'?').slice(0,16);b.textContent=(T==='coins'?'':v>0?'+':'')+fmt(v);li.append(a,b);L.append(li)})}
+$$('#lbt button').forEach(b=>b.onclick=()=>{lbT=b.dataset.k;$$('#lbt button').forEach(x=>x.classList.toggle('on',x===b));$('#lbd').textContent=lbT==='coins'?'Ranked by coins held. Top 10.':'Ranked by net coins won in this game. Top 10.';lbLoad()});
+function tab(t){$$('.pane').forEach(p=>p.classList.toggle('on',p.id===t));$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));curTab=t;if(t==='plk')plkLoop();if(t==='lb')lbLoad();if(t==='adm')adminRender()}
 $$('#tabs button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
-function render(){const on=!!me;$('#who').textContent=on?me:'';$('#bal').textContent=on?fmt(coins()):'—';$('#out').hidden=!on;$('#daily').hidden=!on;$('#relief').hidden=!(on&&coins()<10);$('[data-t=adm]').hidden=!adm;if(!adm&&curTab==='adm')tab('roul');if(adm&&curTab==='adm')adminRender()}
-$('#daily').onclick=()=>{const u=U[me],now=Date.now(),h=(now-u.last)/36e5;if(h<20){toast('Next daily onion in '+Math.ceil(20-h)+'h');return}u.streak=h<48?u.streak+1:1;u.last=now;const g=200+50*Math.min(u.streak,10);add(g);pop();toast('Day '+u.streak+' streak: +'+g+' coins')};
+function render(){const on=!!P;$('#who').textContent=on?me:'';$('#bal').textContent=on?fmt(coins()):'—';$('#out').hidden=!on;$('#daily').hidden=!on;$('#relief').hidden=!(on&&coins()<10);$('[data-t=adm]').hidden=!adm;if(!adm&&curTab==='adm')tab('roul')}
+$('#daily').onclick=()=>{const now=Date.now(),last=P.last_daily?Date.parse(P.last_daily):0,h=(now-last)/36e5;if(h<20){toast('Next daily onion in '+Math.ceil(20-h)+'h');return}P.streak=h<48?P.streak+1:1;P.last_daily=new Date(now).toISOString();const g=200+50*Math.min(P.streak,10);add(g);pop();toast('Day '+P.streak+' streak: +'+g+' coins')};
 $('#relief').onclick=()=>{if(coins()<10){add(500);toast('The onion council pities you. +500')}};
 const win=(bet,m,txt)=>{add(bet*m);if(m>1)pop();toast(txt)};
 
@@ -182,14 +186,19 @@ $('#hlup').onclick=()=>hlG(true);$('#hldn').onclick=()=>hlG(false);
 $('#hlcash').onclick=()=>{if(!hl.on)return;hl.on=false;const w=Math.floor(hl.bet*hl.m);add(w);rec('hilo',w-hl.bet);if(hl.m>1)pop();hlR('Cashed out '+fmt(w)+' coins');toast('Cashed out '+fmt(w))};
 
 /* ADMIN */
-function adminRender(){const ks=Object.keys(U);$('#astat').textContent=ks.length+' players · '+fmt(ks.reduce((s,k)=>s+U[k].coins,0))+' coins in play';
-$('#atb').innerHTML=ks.map(k=>'<tr><td>'+k+'</td><td><input type="number" value="'+U[k].coins+'" data-k="'+k+'"></td><td><button data-a="set" data-k="'+k+'">Set</button> <button data-a="add" data-k="'+k+'">+1000</button> '+(k==='son'?'':'<button data-a="del" data-k="'+k+'">Delete</button>')+'</td></tr>').join('')}
-$('#atb').onclick=e=>{const b=e.target.closest('button');if(!b||!adm)return;const k=b.dataset.k,a=b.dataset.a;if(!U[k])return;
-if(a==='set')U[k].coins=Math.max(0,Math.floor(+$('#atb input[data-k="'+k+'"]').value)||0);
-if(a==='add')U[k].coins+=1000;if(a==='del'&&k!=='son')delete U[k];save();render();adminRender()};
-$('#agift').onclick=()=>{if(!adm)return;Object.values(U).forEach(u=>u.coins+=500);save();render();adminRender();toast('Gifted 500 to everyone')};
-$('#areset').onclick=()=>{if(!adm)return;Object.values(U).forEach(u=>u.coins=1000);save();render();adminRender()};
+async function adminRender(){if(!adm||!SB)return;const r=await SB.from('profiles').select('id,username,coins').order('coins',{ascending:false});if(r.error)return;const d=r.data;
+$('#astat').textContent=d.length+' players · '+fmt(d.reduce((s,x)=>s+x.coins,0))+' coins in play';
+$('#atb').innerHTML=d.map(x=>'<tr><td>'+x.username+'</td><td><input type="number" value="'+x.coins+'" data-k="'+x.id+'"></td><td><button data-a="set" data-k="'+x.id+'">Set</button> <button data-a="add" data-k="'+x.id+'">+1000</button> '+(x.id===P.id?'':'<button data-a="del" data-k="'+x.id+'">Delete</button>')+'</td></tr>').join('')}
+async function refreshMe(){const r=await SB.from('profiles').select('*').eq('id',P.id).single();if(r.data)P=r.data;render();adminRender()}
+$('#atb').onclick=async e=>{const b=e.target.closest('button');if(!b||!adm)return;const k=b.dataset.k,a=b.dataset.a,v=Math.max(0,Math.floor(+$('#atb input[data-k="'+k+'"]').value)||0);
+if(a==='set')await SB.from('profiles').update({coins:v}).eq('id',k);
+if(a==='add')await SB.from('profiles').update({coins:v+1000}).eq('id',k);
+if(a==='del'&&k!==P.id)await SB.from('profiles').delete().eq('id',k);
+refreshMe()};
+$('#agift').onclick=async()=>{if(!adm)return;const r=await SB.from('profiles').select('id,coins');await Promise.all((r.data||[]).map(x=>SB.from('profiles').update({coins:x.coins+500}).eq('id',x.id)));await refreshMe();toast('Gifted 500 to everyone')};
+$('#areset').onclick=async()=>{if(!adm)return;const r=await SB.from('profiles').select('id');await Promise.all((r.data||[]).map(x=>SB.from('profiles').update({coins:1000}).eq('id',x.id)));await refreshMe()};
 
-try{const s=JSON.parse(st.g('dg_me')||'null');if(s&&U[s.u]){me=s.u;adm=!!s.a&&s.u==='son'}}catch(e){}
-render();if(!me)show();
+render();lbR();
+if(SB)SB.auth.getSession().then(async({data})=>{if(!(data.session&&await enter(data.session.user.id)))show()});else{show();$('#aerr').textContent='Database library did not load. Check your connection.'}
+setInterval(()=>{if(curTab==='lb')lbLoad()},10000);
 </script></body></html>
