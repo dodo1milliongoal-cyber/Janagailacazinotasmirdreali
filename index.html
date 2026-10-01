@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#0b0713">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700;800&display=swap">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 /* ══════════════════════════════════════════════════════════════
    JĀņA   G A IļA   K A ZīN O  ·  liquid glass system
@@ -892,9 +892,9 @@ const Q=LOWFX?.42:1;
    5. Authentication → Providers → Email → izslēdz "Confirm email"
    ══════════════════════════════════════════════════════════════ */
 const SB_URL='https://ssicmanegiuxqbnaljtc.supabase.co';
-const SB_KEY='eyJhbgciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzaWNtYW5lZ2l1eHFibmFsanRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3MDI2NDYsImV4cCI6MjEwNjI3ODY0Nn0.x3de4mUcOUx9KAytoAVyUPqysp_cMa33MgjantSHBfc';
+const SB_KEY='sb_publishable_hw6qv4-oaWNT0Bc_1ua2Gw_5ma2POpN';
 const sbReady=()=>!!(window.supabase && /^https:\/\/[a-z0-9-]+\.supabase\.(co|in)$/i.test(SB_URL)
-                  && SB_KEY.split('.').length===3 && SB_KEY.length>80);
+                  && SB_KEY.length>20);
 const SB=sbReady()?window.supabase.createClient(SB_URL,SB_KEY):null;
 
 let P=null,me=null,uid=null,adm=false,curTab='lobby',LB=[],lbT='coins',lbScope='all';
